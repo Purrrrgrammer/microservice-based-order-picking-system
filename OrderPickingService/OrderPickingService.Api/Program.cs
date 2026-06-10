@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
-using OrderPickingService.Api.Services;
 using OrderPickingService.Infrastructure.Database;
 using OrderPickingService.Infrastructure.Database.Migrations;
 using OrderPickingService.Infrastructure.ExternalServices;
@@ -21,50 +20,9 @@ public class Program
         var services = builder.Services;
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options =>
-        {
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Введите JWT токен в формате: Bearer {токен}"
-            });
-            
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] {}
-                }
-            });
-        });
-
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => //TODO: вынести в настройки
-            {
-                options.Authority = "http://localhost:8080/realms/csharp-2025-09-project";
-                options.Audience = "account";//"order-picking-service";
-                options.RequireHttpsMetadata = false; // Для локальной разработки
-                
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", 
-                    NameClaimType = "preferred_username" 
-                };
-            });
+        services.AddSwaggerGen();
+        
         services
-            .AddScoped<IClaimsTransformation, KeycloakRolesTransformer>()
-            .AddAuthorization()
             .AddDatabase(builder.Configuration)
             .AddDomainServices()
             .AddStorageHttpClient(builder.Configuration)
