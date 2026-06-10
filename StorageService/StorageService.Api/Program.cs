@@ -121,7 +121,7 @@ app.MapControllers();
 
 app.MapGet("/health", () => Task.FromResult<IResult>(TypedResults.Text("Storage service working")))
     .WithName("CheckHealth")
-    .WithTags("������")
+    .WithTags("Health")
     .Produces(200)
     .AllowAnonymous();
 

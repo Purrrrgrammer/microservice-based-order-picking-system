@@ -1,24 +1,9 @@
 services:
-  keycloak:
-    image: quay.io/keycloak/keycloak:24.0.1
-    environment:
-      # Пароль для админа Keycloak
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin123
-      # Пока embedded БД для простоты
-      KC_DB: dev-file
-    ports:
-      # Открываем порт для доступа
-      - "8080:8080"
-    command:
-      # Запускаем в development режиме
-      - start-dev
-
   postgres:
     image: postgres:latest
     environment:
       POSTGRES_PASSWORD: P@ssw0rd
-      POSTGRES_MULTIPLE_DATABASES: UsersDb,StorageDb,OrderPickingDb,OrdersDb,ShiftDb
+      POSTGRES_MULTIPLE_DATABASES: UsersDb,StorageDb,OrderPickingDb,OrdersDb
     ports:
       - "5433:5432"
     networks:
@@ -145,37 +130,7 @@ services:
       - shop-network
       - shop-pg-network
     restart: unless-stopped
-  
-  shift-service:
-    image: shift-service
-    build:
-      context: .
-      dockerfile: ShiftService/ShiftService.Api/Dockerfile
-    ports:
-      - "8084:8080"
-    environment:
-      ConnectionStrings__ShiftDb: Host=postgres;Port=5432;Database=ShiftDb;Username=postgres;Password=P@ssw0rd
-      ASPNETCORE_URLS: http://+:8080
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - shop-network
-      - shop-pg-network
-    restart: unless-stopped
-  
-  shift-kiosk:
-    build:
-      context: .
-      dockerfile: ShiftService.Kiosk/Dockerfile
-    ports:
-        - "8085:80"
-    environment:
-       API_BASE_URL: http://shift-service:8080 
-    networks:
-      - shop-network
-    restart: unless-stopped
-
+    
 networks:
   shop-network:
     name: shop-network

@@ -1,12 +1,8 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Common.Messages;
 
-public abstract record MessageBase
-{
-}
-
-public record ProductMessageFromStorage : MessageBase
+public record ProductMessageFromStorage
 {
     [JsonInclude]
     public Guid ProductId { get; set; }
@@ -26,11 +22,4 @@ public record ProductMessageFromStorage : MessageBase
     [JsonInclude]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ProductEventType EventType { get; set; }
-}
-
-public enum ProductEventType
-{
-    ProductChanged,
-    ProductAddedToStock,
-    ProductRemovedFromStock,
 }

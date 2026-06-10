@@ -1,7 +1,6 @@
 namespace Common.Messages.PickingCompleted;
 
-public record PickingCompletedMessage
-(
+public record PickingCompletedMessage(
     long OrderId,
     long PickingId,
     Guid ExternalOrderId,
@@ -10,4 +9,4 @@ public record PickingCompletedMessage
     DateTime? FinishedAt,
     string PickingStatus,
     string? Notes,
-    List<PickingResultItem> Items) : MessageBase;
+    List<PickingResultItem> Items);
